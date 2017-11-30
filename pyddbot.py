@@ -14,7 +14,8 @@ import sys
 import signal
 import subprocess
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """
 ---Process ID Management Starts---
@@ -71,80 +72,109 @@ utc = pytz.utc
 
 print("I'm On..!!")
 
+
 def start(bot, update, args):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        bot.sendMessage(chat_id=update.message.chat_id,text='''
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id, text='''
 Hi! My powers are solely for the service of PyData Delhi Community
 Use /help to get /help''')
 
+
 def website(bot, update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        bot.sendMessage(chat_id=update.message.chat_id,text='https://pydatadelhi.github.io/ (WIP)')
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id,
+                    text='https://pydatadelhi.github.io/ (WIP)')
+
 
 def twitter(bot, update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        bot.sendMessage(chat_id=update.message.chat_id,text='http://twitter.com/pydatadelhi')
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id,
+                    text='http://twitter.com/pydatadelhi')
+
 
 def meetup(bot, update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        bot.sendMessage(chat_id=update.message.chat_id,text='https://www.meetup.com/PyDataDelhi/')
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id,
+                    text='https://www.meetup.com/PyDataDelhi/')
+
 
 def nextmeetup(bot, update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        r=requests.get('http://api.meetup.com/PyDataDelhi/events', params=meetupApi)
-        #print(r.json()[0])
-        event_link=r.json()[0]['link']
-        date_time=r.json()[0]['time']//1000
-        utc_dt = utc.localize(datetime.utcfromtimestamp(date_time))
-        indian_tz = timezone('Asia/Kolkata')
-        date_time=utc_dt.astimezone(indian_tz)
-        date_time=date_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
-        if 'venue' in r.json()[0]:
-                venue=r.json()[0]['venue']['address_1']
-                bot.sendLocation(chat_id=update.message.chat_id, latitude=r.json()[0]['venue']['lat'],longitude=r.json()[0]['venue']['lon'])
-        else:
-                venue='Venue is still to be decided'
-        bot.sendMessage(chat_id=update.message.chat_id, text='''
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    r = requests.get(
+        'http://api.meetup.com/PyDataDelhi/events', params=meetupApi)
+    # print(r.json()[0])
+    event_link = r.json()[0]['link']
+    date_time = r.json()[0]['time']//1000
+    utc_dt = utc.localize(datetime.utcfromtimestamp(date_time))
+    indian_tz = timezone('Asia/Kolkata')
+    date_time = utc_dt.astimezone(indian_tz)
+    date_time = date_time.strftime('%Y-%m-%d %H:%M:%S %Z%z')
+    if 'venue' in r.json()[0]:
+        venue = r.json()[0]['venue']['address_1']
+        bot.sendLocation(chat_id=update.message.chat_id, latitude=r.json()[
+                         0]['venue']['lat'], longitude=r.json()[0]['venue']['lon'])
+    else:
+        venue = 'Venue is still to be decided'
+    bot.sendMessage(chat_id=update.message.chat_id, text='''
 Next Meetup
 Date/Time : %s
 Venue : %s
 Event Page : %s
-'''%(date_time, venue, event_link))
+''' % (date_time, venue, event_link))
+
 
 def nextmeetups(bot, update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        r=requests.get('http://api.meetup.com/PyDataDelhi/events', params=meetupApi)
-        #print(re.sub('</a>','',re.sub('<a href="','',re.sub('<br/>',' ',re.sub('<p>',' ',re.sub('</p>','\n',r.json()[0]['description']))))))
-        bot.sendMessage(chat_id=update.message.chat_id, text='''
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    r = requests.get(
+        'http://api.meetup.com/PyDataDelhi/events', params=meetupApi)
+    #print(re.sub('</a>','',re.sub('<a href="','',re.sub('<br/>',' ',re.sub('<p>',' ',re.sub('</p>','\n',r.json()[0]['description']))))))
+    bot.sendMessage(chat_id=update.message.chat_id, text='''
 Next Meetup Schedule
 %s
-'''%(re.sub('</a>','',re.sub('<a href="','',re.sub('<br/>',' ',re.sub('<p>',' ',re.sub('</p>','\n',r.json()[0]['description'])))))),parse_mode='HTML')
+''' % (re.sub('</a>', '', re.sub('<a href="', '', re.sub('<br/>', ' ', re.sub('<p>', ' ', re.sub('</p>', '\n', r.json()[0]['description'])))))), parse_mode='HTML')
+
 
 def facebook(bot, update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        bot.sendMessage(chat_id=update.message.chat_id, text='https://www.facebook.com/pydatadelhi')
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id,
+                    text='https://www.facebook.com/pydatadelhi')
+
 
 def github(bot, update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        bot.sendMessage(chat_id=update.message.chat_id, text='https://github.com/pydatadelhi')
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id,
+                    text='https://github.com/pydatadelhi')
 
-def invitelink(bot,update):
-        bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        sleep(0.2)
-        bot.sendMessage(chat_id=update.message.chat_id, text='https://t.me/joinchat/B71pNUGrUQ7QHuyUJq-Ajg')
+
+def invitelink(bot, update):
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id,
+                    text='https://t.me/joinchat/B71pNUGrUQ7QHuyUJq-Ajg')
+
 
 def help(bot, update):
-	bot.sendChatAction(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-	sleep(0.2)
-	bot.sendMessage(chat_id=update.message.chat_id, text='''
+    bot.sendChatAction(chat_id=update.message.chat_id,
+                       action=ChatAction.TYPING)
+    sleep(0.2)
+    bot.sendMessage(chat_id=update.message.chat_id, text='''
 Use one of the following commands
 /twitter - to get PyData Delhi Twitter link
 /meetuppage - to get a link to PyData Delhi Meetup page
@@ -158,6 +188,7 @@ Use one of the following commands
 
 To contribute to|modify this bot : https://github.com/realslimshanky/PyData-Delhi-Bot
 ''')
+
 
 dispatcher.add_handler(CommandHandler('start', start, pass_args=True))
 dispatcher.add_handler(CommandHandler('website', website))
