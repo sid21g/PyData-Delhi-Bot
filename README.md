@@ -13,4 +13,5 @@ PyData Delhi Bot is a Telegram bot for sharing information about PyData Delhi co
 * Open Terminal and get inside the repository folder by running `cd PyData-Delhi-Bot`
 * Install `pipenv` by running `pip install pipenv`
 * To install all other requirements simply run `pipenv install -r requirements.txt`
-* Run the program by `pipenv run python pydelhi.py` and follow the instructions if mentioned.
+* Run the program by `pipenv run python pyddbot.py` and follow the instructions if mentioned.
+
