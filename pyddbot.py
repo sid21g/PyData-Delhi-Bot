@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler,MessageHandler, Filters
 from telegram import ChatAction
 from datetime import datetime, timedelta
 from pytz import timezone
@@ -14,6 +14,7 @@ import sys
 import signal
 import subprocess
 
+BOTNAME = 'PyData Delhi Bot'
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -189,6 +190,36 @@ Use one of the following commands
 To contribute to|modify this bot : https://github.com/realslimshanky/PyData-Delhi-Bot
 ''')
 
+# Welcome a user to the chat
+def welcome(bot, update):
+    """ Welcomes a user to the chat """
+
+    message = update.message
+    chat_id = message.chat.id
+    
+   
+    text = 'Hello {}! Welcome to {} '.format(message.new_chat_member.first_name,message.chat.title) 
+              
+    
+        
+    send_async(bot, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
+    
+#Self-Introduction when added to group    
+def intro(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    text = 'Hi everyone,I am a PyData Delhi Bot'
+    send_async(bot, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)    
+
+def empty_message(bot, update):
+
+    if update.message.new_chat_member is not None:
+        # Bot was added to a group chat
+        if update.message.new_chat_member.username == BOTNAME:
+            return intro(bot, update)
+        # Another user joined the chat
+        else:
+            return welcome(bot, update)    
 
 dispatcher.add_handler(CommandHandler('start', start, pass_args=True))
 dispatcher.add_handler(CommandHandler('website', website))
@@ -200,5 +231,5 @@ dispatcher.add_handler(CommandHandler('facebook', facebook))
 dispatcher.add_handler(CommandHandler('github', github))
 dispatcher.add_handler(CommandHandler('invitelink', invitelink))
 dispatcher.add_handler(CommandHandler('help', help))
-
+dispatcher.add_handler(MessageHandler([Filters.status_update], empty_message))
 updater.start_polling()
