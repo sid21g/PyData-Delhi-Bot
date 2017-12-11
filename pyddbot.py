@@ -18,6 +18,10 @@ BOTNAME = 'PyData Delhi Bot'
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+@run_async
+def send_async(bot, *args, **kwargs):
+    bot.sendMessage(*args, **kwargs)
+    
 """
 ---Process ID Management Starts---
 This part of the code helps out when you want to run your program in background using '&'. This will save the process id of the program going in background in a file named 'pid'. Now, when you run you program again, the last one will be terminated with the help of pid. If in case the no process exist with given process id, simply the `pid` file will be deleted and a new one with current pid will be created.
