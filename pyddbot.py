@@ -1,6 +1,7 @@
-from telegram.ext import Updater, CommandHandler
-from telegram import ChatAction
+from telegram.ext import Updater, CommandHandler,MessageHandler, Filters
+from telegram import ChatAction,ParseMode
 from datetime import datetime, timedelta
+from telegram.ext.dispatcher import run_async
 from pytz import timezone
 from time import sleep
 import logging
@@ -14,9 +15,14 @@ import sys
 import signal
 import subprocess
 
+BOTNAME = 'PyData Delhi Bot'
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+@run_async
+def send_async(bot, *args, **kwargs):
+    bot.sendMessage(*args, **kwargs)
+    
 """
 ---Process ID Management Starts---
 This part of the code helps out when you want to run your program in background using '&'. This will save the process id of the program going in background in a file named 'pid'. Now, when you run you program again, the last one will be terminated with the help of pid. If in case the no process exist with given process id, simply the `pid` file will be deleted and a new one with current pid will be created.
@@ -189,6 +195,36 @@ Use one of the following commands
 To contribute to|modify this bot : https://github.com/realslimshanky/PyData-Delhi-Bot
 ''')
 
+# Welcome a user to the chat
+def welcome(bot, update):
+    """ Welcomes a user to the chat """
+
+    message = update.message
+    chat_id = message.chat.id
+    
+   
+    text = 'Hello {}! Welcome to {} '.format(message.new_chat_member.first_name,message.chat.title) 
+              
+    
+        
+    send_async(bot, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
+    
+#Self-Introduction when added to group    
+def intro(bot, update):
+    message = update.message
+    chat_id = message.chat.id
+    text = 'Hi everyone,I am a PyData Delhi Bot'
+    send_async(bot, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)    
+
+def empty_message(bot, update):
+
+    if update.message.new_chat_member is not None:
+        # Bot was added to a group chat
+        if update.message.new_chat_member.username == BOTNAME:
+            return intro(bot, update)
+        # Another user joined the chat
+        else:
+            return welcome(bot, update)    
 
 dispatcher.add_handler(CommandHandler('start', start, pass_args=True))
 dispatcher.add_handler(CommandHandler('website', website))
@@ -200,5 +236,5 @@ dispatcher.add_handler(CommandHandler('facebook', facebook))
 dispatcher.add_handler(CommandHandler('github', github))
 dispatcher.add_handler(CommandHandler('invitelink', invitelink))
 dispatcher.add_handler(CommandHandler('help', help))
-
+dispatcher.add_handler(MessageHandler(Filters.status_update, empty_message))
 updater.start_polling()
