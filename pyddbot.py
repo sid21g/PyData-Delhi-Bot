@@ -173,7 +173,7 @@ def invitelink(bot, update):
                        action=ChatAction.TYPING)
     sleep(0.2)
     bot.sendMessage(chat_id=update.message.chat_id,
-                    text='https://t.me/joinchat/B71pNUGrUQ7QHuyUJq-Ajg')
+                    text='https://t.me/joinchat/EzxNR0GrUQ7Xc0BaThNv3g')
 
 
 def help(bot, update):
